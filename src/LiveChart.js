@@ -9,12 +9,11 @@ const LiveChart = (props) => {
 
     let options = {
         'protocol': 'mqtt',
-        'clientId': 'client_1',
+        'clientId': 'webapp',
     };
 
     useEffect(() => {
         if (client) {
-            console.log(client)
             client.on('connect', (conn) => {
                 setConnectStatus('Connected!');
             });
@@ -33,7 +32,6 @@ const LiveChart = (props) => {
             });
             client.on('message', (topic, message) => {
                 setPayload({ topic: topic, message: message.toString() });
-                console.info(payload);
             });
             client.subscribe(["rpi3", "rpi4"]);
         }
