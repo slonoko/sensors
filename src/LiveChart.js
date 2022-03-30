@@ -1,22 +1,15 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect, IClientOptions } from 'mqtt';
+import { connect, IClientOptions, MqttClient } from 'mqtt';
 
 const LiveChart = (props) => {
     const [client, setClient] = useState(null);
     const [connectionStatus, setConnectStatus] = useState(null);
-    const [payload, setPayload] = useState(null);
+    const [payload, setPayload] = useState({});
 
     let options = {
-        'hostname': 'sensor',
-        'port': 1883,
         'protocol': 'mqtt',
-        'protocolId': 'MQIsdp',
-        'protocolVersion': 3,
         'clientId': 'client_1',
-        'keepalive': 60,
-        'reconnectPeriod': 5000,
-        'clean': true,
     };
 
     useEffect(() => {
@@ -39,19 +32,24 @@ const LiveChart = (props) => {
                 setConnectStatus('Disconnected');
             });
             client.on('message', (topic, message) => {
-                setPayload({ topic, message: message });
+                setPayload({ topic: topic, message: message.toString() });
+                console.info(payload);
             });
+            client.subscribe(["rpi3", "rpi4"]);
         }
     }, [client]);
 
     useLayoutEffect(() => {
         setConnectStatus('Connecting ...');
-        setClient(connect("ws://sensor:1880/dht"));
+        setClient(connect("mqtt://sensor:9090", options));
     }, []);
 
     // mqtt://sensor:1883
     return (
+        <div>
         <p>Status: {connectionStatus}</p>
+        <p>{payload.message}</p>
+        </div>
     );
 }
 
