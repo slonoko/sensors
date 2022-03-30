@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect, IClientOptions, MqttClient } from 'mqtt';
+import { connect } from 'mqtt';
+import { v4 as uuidv4 } from 'uuid';
 
 const LiveChart = (props) => {
     const [client, setClient] = useState(null);
@@ -9,7 +10,7 @@ const LiveChart = (props) => {
 
     let options = {
         'protocol': 'mqtt',
-        'clientId': 'webapp',
+        'clientId': uuidv4(),
     };
 
     useEffect(() => {
