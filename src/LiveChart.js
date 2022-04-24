@@ -1,55 +1,65 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'mqtt';
-import { v4 as uuidv4 } from 'uuid';
-
+import React, { useEffect, useState } from 'react';
+import { Chart } from "react-google-charts";
+// http://ubuntu:1880/sensor
 const LiveChart = (props) => {
-    const [client, setClient] = useState(null);
-    const [connectionStatus, setConnectStatus] = useState(null);
-    const [payload, setPayload] = useState({});
 
-    let options = {
-        'protocol': 'mqtt',
-        'clientId': uuidv4(),
+    const [error, setError] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [sensorData, setSensorData] = useState([]);
+
+    const chart_header = ["Date & Time", "Temperature", "Humidity"];
+
+    const chart_options = {
+        hAxis: {
+            title: "Date & Time",
+        },
+        vAxis: {
+            title: "Temperature & humidity",
+        },
+        series: {
+            1: { curveType: "function" },
+        },
     };
 
-    useEffect(() => {
-        if (client) {
-            client.on('connect', (conn) => {
-                setConnectStatus('Connected!');
-            });
-            client.on('error', (err) => {
-                console.error('Connection error: ', err);
-                client.end();
-            });
-            client.on('reconnect', () => {
-                setConnectStatus('Reconnecting ...');
-            });
-            client.on('close', () => {
-                setConnectStatus('Closed');
-            });
-            client.on('disconnect', (packet) => {
-                setConnectStatus('Disconnected');
-            });
-            client.on('message', (topic, message) => {
-                setPayload({ topic: topic, message: message.toString() });
-            });
-            client.subscribe(["rpi3", "rpi4"]);
+    const parseSensorData = (data) => {
+        let chart_data = [];
+        chart_data.push(chart_header);
+        for(let probe of data){
+            chart_data.push([new Date(probe.timestamp), {'v':parseFloat(probe.temperature),'f':parseFloat(probe.temperature)+'°C'}, {'v':parseFloat(probe.humidity),'f':parseFloat(probe.humidity)+'%'}]);
         }
-    }, [client]);
+        return chart_data;
+    }
 
-    useLayoutEffect(() => {
-        setConnectStatus('Connecting ...');
-        setClient(connect("mqtt://sensor:9090", options));
-    }, []);
+    useEffect(() => {
+        fetch("http://ubuntu:1880/sensor")
+            .then(res => res.json())
+            .then(
+                (data) => {
+                    setIsLoaded(true);
+                    setSensorData(parseSensorData(data));
+                },
+                (error) => {
+                    setIsLoaded(false);
+                    setError(error);
+                }
+            )
+    },[]);
 
-    // mqtt://sensor:1883
-    return (
-        <div>
-        <p>Status: {connectionStatus}</p>
-        <p>{payload.message}</p>
-        </div>
-    );
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+        return <div>Loading...</div>;
+    } else {
+        return (
+            <Chart
+                chartType="LineChart"
+                data={sensorData}
+                options={chart_options}
+                width="100%"
+                height="400px"
+            />
+        );
+    }
 }
 
 export default LiveChart;
