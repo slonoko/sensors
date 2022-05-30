@@ -7,14 +7,14 @@ const LiveChart = (props) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [sensorData, setSensorData] = useState([]);
 
-    const chart_header = ["Date & Time", "Temperature", "Humidity"];
+    const chart_header = ["Date & Time", "Temperature"];
 
     const chart_options = {
         hAxis: {
             title: "Date & Time",
         },
         vAxis: {
-            title: "Temperature & humidity",
+            title: "Temperature",
         },
         series: {
             1: { curveType: "function" },
@@ -25,7 +25,7 @@ const LiveChart = (props) => {
         let chart_data = [];
         chart_data.push(chart_header);
         for(let probe of data){
-            chart_data.push([new Date(probe.timestamp), {'v':parseFloat(probe.temperature),'f':parseFloat(probe.temperature)+'°C'}, {'v':parseFloat(probe.humidity),'f':parseFloat(probe.humidity)+'%'}]);
+            chart_data.push([new Date(probe.timestamp), {'v':parseFloat(probe.temperature),'f':parseFloat(probe.temperature)+'°C'}]);
         }
         return chart_data;
     }
