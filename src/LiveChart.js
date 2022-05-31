@@ -30,36 +30,32 @@ const LiveChart = (props) => {
             root.current = root;
 
             var chart = root.container.children.push(am5xy.XYChart.new(root, {
-                focusable: true,
                 panX: true,
                 panY: true,
                 wheelX: "panX",
                 wheelY: "zoomX",
                 pinchZoomX: true,
-                layout: root.verticalLayout,
-                maxTooltipDistance: 0
             }));
 
             var easing = am5.ease.linear;
             chartRef.current = chart;
 
-            // Create axes
-            // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+            let cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+            cursor.lineY.set("visible", false);
+
             var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                maxDeviation: 0.1,
+                maxDeviation: 0.3,
                 groupData: false,
                 baseInterval: {
                     timeUnit: "minute",
-                    count: 1
+                    count: 10
                 },
-                renderer: am5xy.AxisRendererX.new(root, {
-                    minGridDistance: 50
-                })
+                renderer: am5xy.AxisRendererX.new(root, {}),
+                tooltip: am5.Tooltip.new(root, {})
             }));
 
             var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                maxDeviation: 0.1,
-                extraTooltipPrecision: 1,
+                maxDeviation: 0.3,
                 renderer: am5xy.AxisRendererY.new(root, {})
             }));
 
@@ -70,12 +66,12 @@ const LiveChart = (props) => {
                 valueYField: "value",
                 valueXField: "date",
                 tooltip: am5.Tooltip.new(root, {
-                    pointerOrientation: "horizontal",
                     labelText: "{valueY}°C"
                 })
             }));
-
-            series.data.setAll(sensorData);
+            series.strokes.template.setAll({
+                strokeWidth: 2,
+              });
 
             series.bullets.push(function (root, series, dataItem) {
                 // only create sprite if bullet == true in data context
@@ -107,30 +103,16 @@ const LiveChart = (props) => {
                     });
 
                     return am5.Bullet.new(root, {
-                        locationX: undefined,
                         sprite: container
                     })
                 }
-            })
+            });
 
+            series.data.setAll(sensorData);
 
-            // Add cursor
-            // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
-            let cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
-                xAxis: xAxis
-            }));
-            cursor.lineY.set("visible", false);
-
-            xAxis.set("tooltip", am5.Tooltip.new(root, {
-                themeTags: ["axis"]
-            }));
-
-            yAxis.set("tooltip", am5.Tooltip.new(root, {
-                themeTags: ["axis"]
-            }));
-
-            series.appear(1000, 100);
+            series.appear(1000);
             chart.appear(1000, 100);
+
             return () => {
                 root.dispose();
             };
