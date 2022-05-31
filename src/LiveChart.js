@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Chart } from "react-google-charts";
-// http://ubuntu:1880/sensor
 const LiveChart = (props) => {
 
     const [error, setError] = useState(null);
@@ -31,7 +30,7 @@ const LiveChart = (props) => {
     }
 
     useEffect(() => {
-        fetch("http://ubuntu:1880/sensor")
+        fetch("http://temp:1880/sensor")
             .then(res => res.json())
             .then(
                 (data) => {
