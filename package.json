@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts5": "^5.2.6",
+    "@amcharts/amcharts5-fonts": "^5.0.1",
+    "@amcharts/amcharts5-geodata": "^5.0.3",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
@@ -11,7 +14,6 @@
     "react": "^17.0.0",
     "react-bootstrap": "^2.2.3",
     "react-dom": "^17.0.0",
-    "react-google-charts": "^4.0.0",
     "react-scripts": "4.0.3",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"
