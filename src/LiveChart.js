@@ -45,7 +45,7 @@ const LiveChart = (props) => {
             cursor.lineY.set("visible", false);
 
             var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
-                maxDeviation: 0.3,
+                maxDeviation: 0,
                 groupData: false,
                 baseInterval: {
                     timeUnit: "minute",
@@ -56,7 +56,7 @@ const LiveChart = (props) => {
             }));
 
             var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                maxDeviation: 0.3,
+                maxDeviation: 0,
                 logarithmic: true,
                 renderer: am5xy.AxisRendererY.new(root, {})
             }));
