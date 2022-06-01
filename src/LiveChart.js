@@ -9,6 +9,7 @@ const LiveChart = (props) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [sensorData, setSensorData] = useState([]);
     const chartRef = useRef(null);
+    const [timer, setTimer] = useState(new Date().getTime())
 
     const parseSensorData = (data) => {
         let chart_data = [];
@@ -56,6 +57,7 @@ const LiveChart = (props) => {
 
             var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                 maxDeviation: 0.3,
+                logarithmic: true,
                 renderer: am5xy.AxisRendererY.new(root, {})
             }));
 
@@ -110,8 +112,6 @@ const LiveChart = (props) => {
 
             series.data.setAll(sensorData);
 
-            series.appear(1000);
-            chart.appear(1000, 100);
 
             return () => {
                 root.dispose();
@@ -127,14 +127,20 @@ const LiveChart = (props) => {
                 (data) => {
                     setIsLoaded(true);
                     setSensorData(parseSensorData(data));
+                    console.info("Fetching new data ... DONE");
                 },
                 (error) => {
                     setIsLoaded(false);
                     setError(error);
+                    console.info("Fetching new data ... ERROR");
                 }
             )
+        setTimeout(() => {
+            setTimer(new Date().getTime());
+            console.info("Fetching new data ...");
+        }, 300000);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [timer]);
 
     if (error) {
         return <div>Error: {error.message}</div>;
