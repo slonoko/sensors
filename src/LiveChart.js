@@ -121,7 +121,7 @@ const LiveChart = (props) => {
     }, [isLoaded, sensorData]);
 
     useEffect(() => {
-        fetch("http://temp:1880/sensor")
+        fetch("http://temp:1880/sensor?id=sensor3")
             .then(res => res.json())
             .then(
                 (data) => {
