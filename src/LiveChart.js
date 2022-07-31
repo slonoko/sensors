@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef, Fragment } from 'react';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import "./LiveChart.css"
 
-const LiveChart = (props) => {
+const LiveChart = ({sensorId, title}) => {
 
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -22,7 +23,7 @@ const LiveChart = (props) => {
 
     useLayoutEffect(() => {
         if (isLoaded) {
-            let root = am5.Root.new("chartdiv");
+            let root = am5.Root.new("chartdiv"+ sensorId);
 
             root.setThemes([
                 am5themes_Animated.new(root)
@@ -103,7 +104,7 @@ const LiveChart = (props) => {
                         easing: am5.ease.out(am5.ease.cubic),
                         loops: Infinity
                     });
-
+ 
                     return am5.Bullet.new(root, {
                         sprite: container
                     })
@@ -121,7 +122,7 @@ const LiveChart = (props) => {
     }, [isLoaded, sensorData]);
 
     useEffect(() => {
-        fetch("http://temp:1880/sensor?id=sensor3")
+        fetch("http://temp:1880/sensor?id="+ sensorId)
             .then(res => res.json())
             .then(
                 (data) => {
@@ -148,7 +149,9 @@ const LiveChart = (props) => {
         return <div>Loading...</div>;
     } else {
         return (
-            <div id="chartdiv" style={{ width: "100%", height: "500px" }}></div>
+                <Fragment>
+                        <div className='title'>{title}</div>
+                        <div id={"chartdiv"+sensorId} style={{ width: "100%", height: "500px" }}></div></Fragment>
         );
     }
 }
