@@ -9,6 +9,7 @@ const LiveChart = ({sensorId, title}) => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [sensorData, setSensorData] = useState([]);
+    const [currentTemp, setCurrentTemp] = useState(0);
     const chartRef = useRef(null);
     const [timer, setTimer] = useState(new Date().getTime())
 
@@ -128,6 +129,7 @@ const LiveChart = ({sensorId, title}) => {
                 (data) => {
                     setIsLoaded(true);
                     setSensorData(parseSensorData(data));
+                    setCurrentTemp(data[data.length-1].temperature);
                     console.info("Fetching new data ... DONE");
                 },
                 (error) => {
@@ -150,7 +152,7 @@ const LiveChart = ({sensorId, title}) => {
     } else {
         return (
                 <Fragment>
-                        <div className='title'>{title}</div>
+                        <div className='title'>{title}<br/>{currentTemp}°C</div>
                         <div id={"chartdiv"+sensorId} style={{ width: "100%", height: "500px" }}></div></Fragment>
         );
     }

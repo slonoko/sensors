@@ -75,3 +75,6 @@ docker run --name mongo \
     -e MONGO_INITDB_ROOT_PASSWORD=m4st3r \
     -v /home/ubuntu/data:/data/db \
     mongo
+
+
+set NODE_OPTIONS="--openssl-legacy-provider"
